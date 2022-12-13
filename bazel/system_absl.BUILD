@@ -13,14 +13,10 @@
 # limitations under the License.
 # ============================================================================
 #
-# Description:
-#   Build rule for Python headers.
 
 cc_library(
-    name = "python_headers",
-    hdrs = glob(["include/python3.11/**/*.h"]),
-    strip_include_prefix = "include/python3.11",
-    
+    name = "com_google_absl",
+    hdrs = glob(["**/*.h"]),
     includes = ["."],
     visibility = ["//visibility:public"],
 )

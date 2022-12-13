@@ -54,7 +54,7 @@ cc_library(
     hdrs = ["char_grid.h"],
     deps = [
         ":logging",
-        "@com_google_absl//absl/strings",
+        "@com_google_absl",
     ],
 )
 
@@ -95,7 +95,7 @@ cc_library(
     deps = [
         ":algorithm",
         ":text_maze",
-        "@com_google_absl//absl/strings",
+        "@com_google_absl",
     ],
 )
 

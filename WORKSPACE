@@ -24,11 +24,10 @@ http_archive(
     url = "https://github.com/bazelbuild/bazel-skylib/archive/1.3.0.zip",
 )
 
-http_archive(
+new_local_repository(
     name = "com_google_absl",
-    sha256 = "54707f411cb62a26a776dad5fd60829098c181700edcd022ea5c2ca49e9b7ef1",
-    strip_prefix = "abseil-cpp-20220623.1",
-    url = "https://github.com/abseil/abseil-cpp/archive/20220623.1.zip",
+    path = "/home/traversaro/mambaforge/envs/labmazedev/include",  # absl placeholder
+    build_file = "@//bazel:system_absl.BUILD"
 )
 
 http_archive(
@@ -38,17 +37,15 @@ http_archive(
     url = "https://github.com/google/googletest/archive/release-1.12.1.zip",
 )
 
-http_archive(
+new_local_repository(
     name = "pybind11",
-    build_file = "@//bazel:pybind11.BUILD",
-    sha256 = "fcf94065efcfd0a7a828bacf118fa11c43f6390d0c805e3e6342ac119f2e9976",
-    strip_prefix = "pybind11-2.10.1",
-    url = "https://github.com/pybind/pybind11/archive/v2.10.1.zip",
+    path = "/home/traversaro/mambaforge/envs/labmazedev/include",  # pybind11 placeholder
+    build_file = "@//bazel:system_pybind11.BUILD"
 )
 
 new_local_repository(
     name = "python_headers",
-    path = "/usr/include/python3.7",  # May be overwritten by setup.py.
+    path = "/home/traversaro/mambaforge/envs/labmazedev",  # May be overwritten by setup.py.
     build_file = "@//bazel:python_headers.BUILD"
 )
 

@@ -18,9 +18,9 @@
 
 cc_library(
     name = "python_headers",
-    hdrs = glob(["include/python3.11/**/*.h"]),
-    strip_include_prefix = "include/python3.11",
-    
+    hdrs = glob(["@INCLUDE_DIRECTORIES_PLACEHOLDER@/**/*.h"]),
+    strip_include_prefix = "@INCLUDE_DIRECTORIES_PLACEHOLDER@",
+    @LINK_LIBRARY_LINE_PLACEHOLDER@
     includes = ["."],
     visibility = ["//visibility:public"],
 )

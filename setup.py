@@ -40,6 +40,12 @@ REQUIRED_PACKAGES = [
 WORKSPACE_PYTHON_HEADERS_PATTERN = re.compile(
     r'(?<=path = ").*(?=",  # May be overwritten by setup\.py\.)')
 
+WORKSPACE_PYBIND11_HEADERS_PATTERN = re.compile(
+    r'(?<=path = ").*(?=",  # pybind11 placeholder)')
+
+WORKSPACE_ABSL_HEADERS_PATTERN = re.compile(
+    r'(?<=path = ").*(?=",  # absl placeholder)')
+
 IS_WINDOWS = sys.platform.startswith('win')
 
 
@@ -68,10 +74,47 @@ class BuildBazelExtension(build_ext.build_ext):
       workspace_contents = f.read()
 
     with open('WORKSPACE', 'w') as f:
-      f.write(WORKSPACE_PYTHON_HEADERS_PATTERN.sub(
-          distutils.sysconfig.get_python_inc().replace(os.path.sep,
-                                                       posixpath.sep),
-          workspace_contents))
+      workspace_contents = WORKSPACE_PYTHON_HEADERS_PATTERN.sub(
+          os.environ['PREFIX'].replace(os.path.sep, posixpath.sep),
+          workspace_contents)
+
+      if IS_WINDOWS:
+        include_dir = os.environ['LIBRARY_INC'].replace(os.path.sep,
+                                                       posixpath.sep)
+      else:
+        include_dir = os.path.join(os.environ['PREFIX'],'include')
+
+
+      workspace_contents = WORKSPACE_PYBIND11_HEADERS_PATTERN.sub(
+          include_dir, workspace_contents)
+
+      workspace_contents = WORKSPACE_ABSL_HEADERS_PATTERN.sub(
+          include_dir, workspace_contents)
+
+      f.write(workspace_contents)
+
+    with open('bazel/python_headers.BUILD.in') as f:
+      python_build_contents = f.read()
+
+    with open('bazel/python_headers.BUILD', 'w') as f:
+
+      python_build_contents = python_build_contents.replace(
+          "@INCLUDE_DIRECTORIES_PLACEHOLDER@",
+          os.path.relpath(distutils.sysconfig.get_python_inc(), os.environ['PREFIX']))
+
+      # The only platform that needs an explicit link to Python libraries is macOS
+      if sys.platform.startswith('darwin'):
+          link_library_line = "srcs = [\"lib/libpython3.dylib\"],"
+      else:
+          link_library_line = ""
+
+      python_build_contents = python_build_contents.replace(
+          "@LINK_LIBRARY_LINE_PLACEHOLDER@",
+          link_library_line)
+
+      f.write(python_build_contents)
+
+
 
     if not os.path.exists(self.build_temp):
       os.makedirs(self.build_temp)
